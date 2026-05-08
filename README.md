@@ -1,6 +1,12 @@
 # Fold — Restaurant Website Template
 
-A single-file restaurant landing page. No build step, no dependencies beyond a Google Fonts load. Drop `index.html` on any static host and it works.
+A three-file restaurant landing page. No build step, no dependencies beyond a Google Fonts load. Drop the folder on any static host and it works.
+
+```
+index.html   structure
+styles.css   all styling
+main.js      nav, tabs, scroll reveals, forms
+```
 
 **Demo concept:** Fold, a pizza & natural wine restaurant in French. All copy, prices, and images are placeholder — swap them out for your client.
 
@@ -48,7 +54,7 @@ Forms submit to [Formspree](https://formspree.io) (free tier covers most small r
 
 1. Create a free Formspree account
 2. Create two forms — one for reservations, one for the newsletter
-3. Paste the form IDs near the bottom of `index.html`:
+3. Paste the form IDs at the top of `main.js`:
 
 ```js
 const RESERVATION_FORM_ID = 'YOUR_RESERVATION_FORM_ID';
@@ -63,10 +69,10 @@ The UI is in French. To switch to English (or any other language), update the `l
 
 ## Tech notes
 
-- **No framework, no build.** Pure HTML, CSS, and vanilla JS in one file.
+- **No framework, no build.** Pure HTML, CSS, and vanilla JS across three files.
 - **Fonts:** EB Garamond via Google Fonts (loaded in `<head>`). Requires an internet connection on first load; cache handles repeat visits.
-- **Color system:** CSS custom properties with `oklch()`. Edit the `:root` block at the top of `<style>` to retheme.
-- **Animations:** Hero entrance uses CSS `@keyframes riseIn`. Scroll-triggered sections use `IntersectionObserver` with a `.reveal` / `.visible` class pattern.
+- **Color system:** CSS custom properties with `oklch()`. Edit the `:root` block at the top of `styles.css` to retheme.
+- **Animations:** Hero entrance uses CSS `@keyframes riseIn`. Scroll-triggered sections use `IntersectionObserver` with a `.reveal` / `.visible` class pattern in `main.js`.
 - **Responsive breakpoints:** `900px` (tablet) and `768px` (mobile). Mobile nav replaces the link bar with a full-screen overlay menu.
 
 ---
