@@ -1,0 +1,1493 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLD — Pizza &amp; Vin Nature</title>
+  <meta name="description" content="Une bonne pizza, un vin honnête, et le genre de soirée qui se prolonge bien après minuit. Au 147 rue du Marché.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      oklch(97% 0.012 80);
+      --surface: oklch(99% 0.005 80);
+      --fg:      oklch(20% 0.02 60);
+      --muted:   oklch(48% 0.015 60);
+      --border:  oklch(89% 0.012 80);
+      --accent:  oklch(58% 0.16 35);
+      --accent-dark: oklch(52% 0.19 35);
+
+      --font-display: 'EB Garamond', 'Iowan Old Style', 'Charter', Georgia, serif;
+      --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono:    ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ───────────────────────────────────────────────── */
+
+    .nav {
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      transition: background 0.35s ease, backdrop-filter 0.35s ease, padding 0.3s ease;
+    }
+    .nav.scrolled {
+      background: color-mix(in oklch, var(--bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-reserve {
+      padding: 0.55rem 1.4rem;
+      background: var(--fg);
+      color: var(--bg) !important;
+      transition: background 0.2s !important;
+    }
+    .nav-reserve:hover { background: var(--accent) !important; color: oklch(99% 0.005 80) !important; }
+
+    /* Mobile nav */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--fg);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 190;
+      background: var(--bg);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 3rem);
+      color: var(--fg);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-menu-meta {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      line-height: 2;
+      margin-top: 1rem;
+    }
+
+    /* ─── HERO ──────────────────────────────────────────────── */
+
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 3rem;
+    }
+    .hero-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 8rem;
+      padding-bottom: 2rem;
+    }
+    .hero-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: riseIn 0.8s ease-out 0.1s forwards;
+    }
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(6rem, 20vw, 18rem);
+      font-weight: 400;
+      line-height: 0.88;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: riseIn 0.9s ease-out 0.3s forwards;
+    }
+    .hero-tagline {
+      font-family: var(--font-body);
+      font-size: 1.125rem;
+      color: var(--muted);
+      max-width: 38ch;
+      line-height: 1.6;
+      opacity: 0;
+      animation: riseIn 0.8s ease-out 0.6s forwards;
+    }
+    .hero-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-block: 1.5rem 2.5rem;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: riseIn 0.8s ease-out 0.85s forwards;
+    }
+    .hero-meta {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .hero-scroll {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .hero-scroll:hover { color: var(--accent); }
+    .hero-scroll svg { transition: transform 0.25s ease; }
+    .hero-scroll:hover svg { transform: translateY(4px); }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SCROLL REVEAL ─────────────────────────────────────── */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.75s ease-out, transform 0.75s ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── SHARED SECTION WRAPPER ────────────────────────────── */
+
+    .section {
+      padding: 6rem 3rem;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+
+    /* ─── ABOUT ─────────────────────────────────────────────── */
+
+    .about-wrap {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 4vw, 4rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .about-headline em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .about-body {
+      font-size: 1rem;
+      line-height: 1.75;
+      max-width: 55ch;
+    }
+    .about-body p + p { margin-top: 1.25rem; }
+    .about-stats {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 3rem;
+      border-top: 1px solid var(--border);
+      padding-top: 3rem;
+    }
+    .about-stat {
+      padding: 1.5rem 0;
+    }
+    .about-stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .about-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .about-image {
+      grid-column: 1 / -1;
+      height: 480px;
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .about-image figcaption {
+      position: absolute;
+      bottom: 1.25rem;
+      inset-inline-start: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: oklch(88% 0.01 80);
+      text-shadow: 0 1px 4px oklch(10% 0.02 55 / 0.6);
+    }
+
+    /* ─── MENU ──────────────────────────────────────────────── */
+
+    .menu-wrap {
+      border-top: 1px solid var(--border);
+    }
+    .menu-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3.5rem;
+    }
+    .menu-tab {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.9rem 1.75rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+    .menu-tab:hover { color: var(--fg); }
+    .menu-tab.active { color: var(--fg); border-bottom-color: var(--fg); }
+
+    .menu-panel { display: none; }
+    .menu-panel.active { display: block; }
+
+    .menu-category {
+      margin-bottom: 3.5rem;
+    }
+    .menu-category-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .menu-item:nth-child(odd) { padding-right: 3rem; }
+    .menu-item:nth-child(even) { padding-left: 3rem; border-left: 1px solid var(--border); }
+    .menu-item-info { flex: 1; }
+    .menu-item-name {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: 0.2rem;
+    }
+    .menu-item-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .menu-item-price {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      color: var(--fg);
+      white-space: nowrap;
+    }
+    .menu-note {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2rem;
+    }
+
+    /* ─── GALLERY ───────────────────────────────────────────── */
+
+    .gallery-wrap { border-top: 1px solid var(--border); background: var(--surface); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: 380px 300px;
+      gap: 10px;
+    }
+    .gallery-item { position: relative; overflow: hidden; }
+    .gallery-item:nth-child(1) { grid-column: 1 / 7; }
+    .gallery-item:nth-child(2) { grid-column: 7 / 10; }
+    .gallery-item:nth-child(3) { grid-column: 10 / 13; }
+    .gallery-item:nth-child(4) { grid-column: 1 / 5;  grid-row: 2; }
+    .gallery-item:nth-child(5) { grid-column: 5 / 13; grid-row: 2; }
+
+    .gallery-inner {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .gallery-item:hover .gallery-inner { transform: scale(1.05); }
+
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      padding: 2.5rem 1rem 1rem;
+      background: linear-gradient(to top, oklch(12% 0.02 55 / 0.7), transparent);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: oklch(95% 0.005 80);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gallery-item:hover .gallery-caption { opacity: 1; }
+
+    /* ─── RESERVATIONS ──────────────────────────────────────── */
+
+    .res-wrap {
+      background: var(--fg);
+      padding: 7rem 3rem;
+    }
+    .res-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+    .res-left { }
+    .res-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: oklch(42% 0.012 60);
+      margin-bottom: 2rem;
+    }
+    .res-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.75rem, 5vw, 5rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--bg);
+      margin-bottom: 1.5rem;
+    }
+    .res-body {
+      font-size: 1rem;
+      color: oklch(60% 0.012 60);
+      line-height: 1.7;
+      max-width: 42ch;
+      margin-bottom: 2.5rem;
+    }
+    .res-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid oklch(28% 0.02 55);
+    }
+    .res-detail-row {
+      display: flex;
+      gap: 2rem;
+    }
+    .res-detail dt {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: oklch(42% 0.012 60);
+      margin-bottom: 0.4rem;
+    }
+    .res-detail dd {
+      font-size: 0.9rem;
+      color: oklch(80% 0.01 80);
+      line-height: 1.65;
+    }
+
+    /* Reservation form */
+    .res-form {
+      background: oklch(25% 0.02 55);
+      padding: 2.5rem;
+    }
+    .res-form-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--bg);
+      margin-bottom: 0.4rem;
+    }
+    .res-form-sub {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: oklch(42% 0.012 60);
+      margin-bottom: 2rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: oklch(50% 0.012 60);
+    }
+    .form-input, .form-select, .form-textarea {
+      background: oklch(20% 0.018 55);
+      border: 1px solid oklch(32% 0.02 55);
+      color: oklch(85% 0.01 80);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 0;
+    }
+    .form-input::placeholder { color: oklch(40% 0.012 60); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.5rem;
+    }
+    .form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .form-submit {
+      width: 100%;
+      padding: 0.95rem;
+      background: var(--accent);
+      color: oklch(99% 0.005 80);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 0.5rem;
+    }
+    .form-submit:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    /* ─── EVENTS ────────────────────────────────────────────── */
+
+    .events-wrap {
+      border-top: 1px solid var(--border);
+    }
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .event-item {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: padding-left 0.25s ease;
+    }
+    .event-item:hover { padding-left: 0.75rem; }
+    .event-date {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--accent);
+    }
+    .event-date-sub {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+    .event-name {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      margin-bottom: 0.3rem;
+    }
+    .event-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      max-width: 55ch;
+    }
+    .event-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.35rem 0.75rem;
+      white-space: nowrap;
+    }
+
+    /* ─── NEWSLETTER ────────────────────────────────────────── */
+
+    .nl-wrap {
+      background: oklch(94% 0.018 75);
+      border-top: 1px solid var(--border);
+      padding: 4rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+    .nl-left {
+      max-width: 42ch;
+    }
+    .nl-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .nl-sub {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .nl-form {
+      display: flex;
+      gap: 0;
+      min-width: 360px;
+    }
+    .nl-input {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-right: none;
+      background: var(--surface);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--fg);
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+    .nl-input::placeholder { color: var(--muted); }
+    .nl-input:focus { border-color: var(--fg); }
+    .nl-btn {
+      padding: 0.85rem 1.5rem;
+      background: var(--fg);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .nl-btn:hover { background: var(--accent); }
+
+    /* ─── FOOTER ────────────────────────────────────────────── */
+
+    .footer {
+      padding: 3rem;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 2rem;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: var(--fg);
+    }
+    .footer-links {
+      display: flex;
+      gap: 2.5rem;
+    }
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--fg); }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────── */
+
+    @media (max-width: 900px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .menu-item:nth-child(odd) { padding-right: 0; }
+      .menu-item:nth-child(even) { padding-left: 0; border-left: none; }
+      .res-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 1.25rem 1.5rem; }
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .hero { padding: 0 1.5rem; }
+      .section { padding: 4rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .about-body { max-width: 100%; }
+      .about-image { height: 280px; }
+      .about-stats { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 240px 180px 180px;
+      }
+      .gallery-item:nth-child(n) { grid-column: auto; grid-row: auto; }
+      .gallery-item:nth-child(1) { grid-column: 1 / -1; }
+      .res-wrap { padding: 4.5rem 1.5rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .event-item { grid-template-columns: 80px 1fr; }
+      .event-tag { display: none; }
+      .nl-wrap { flex-direction: column; align-items: flex-start; }
+      .nl-form { min-width: 0; width: 100%; }
+      .footer { grid-template-columns: 1fr; text-align: center; padding: 2rem 1.5rem; }
+      .footer-links { justify-content: center; flex-wrap: wrap; gap: 1.25rem; }
+      .footer-copy { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MENU MOBILE -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" onclick="closeMobileMenu()">Histoire</a>
+    <a href="#menu" onclick="closeMobileMenu()">Carte</a>
+    <a href="#gallery" onclick="closeMobileMenu()">Galerie</a>
+    <a href="#events" onclick="closeMobileMenu()">Agenda</a>
+    <a href="#reservations" onclick="closeMobileMenu()">Réserver</a>
+    <p class="mobile-menu-meta">
+      147 rue du Marché, Le Quartier<br>
+      (555) 019-2847 · bonjour@foldpizza.fr
+    </p>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">Fold</a>
+    <ul class="nav-links">
+      <li><a href="#about">Histoire</a></li>
+      <li><a href="#menu">Carte</a></li>
+      <li><a href="#gallery">Galerie</a></li>
+      <li><a href="#events">Agenda</a></li>
+      <li><a href="#reservations" class="nav-reserve">Réserver</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-body">
+      <p class="hero-kicker">Pizza &amp; Vin Nature — Fondé en 2024</p>
+      <h1 class="hero-name">Fold</h1>
+      <p class="hero-tagline">Une bonne pizza, un vin honnête, et le genre de soirée qui se prolonge bien après minuit.</p>
+    </div>
+    <div class="hero-bar">
+      <p class="hero-meta">
+        147 rue du Marché, Le Quartier<br>
+        Mar – Ven 12h00 – 23h00 &nbsp;·&nbsp; Sam – Dim 11h00 – 23h00
+      </p>
+      <a href="#about" class="hero-scroll">
+        Découvrir
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M7 2.5v9M2.5 7l4.5 4.5 4.5-4.5" stroke="currentColor" stroke-width="1.4"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- NOTRE HISTOIRE -->
+  <div class="about-wrap" id="about">
+    <div class="section">
+      <p class="section-label reveal">01 — Notre Histoire</p>
+      <div class="about-grid">
+        <div class="reveal" style="transition-delay: 0.1s">
+          <h2 class="about-headline">
+            Une cuisine bâtie sur<br>l'<em>instinct</em>, le feu,<br>et 48 heures de pâte.
+          </h2>
+        </div>
+        <div class="reveal" style="transition-delay: 0.22s">
+          <div class="about-body">
+            <p>Fold est né d'une question : et si le restaurant de quartier prenait son métier au sérieux sans se prendre au sérieux ? Nous y avons répondu avec un four à bois, une cave de vins nature et une carte qui évolue au fil des saisons.</p>
+            <p>La pâte repose 48 heures. Les garnitures viennent de moins de 100 kilomètres. La salle accueille 40 couverts, sans une seule mauvaise place. Nous avons ouvert discrètement début 2024 et ne regardons plus en arrière.</p>
+            <p>Fold, c'est un restaurant pour ceux qui aiment la bonne cuisine et détestent la prétention. Venez comme vous êtes. Restez aussi longtemps que vous voulez.</p>
+          </div>
+        </div>
+        <div class="about-stats reveal" style="transition-delay: 0.35s">
+          <div class="about-stat">
+            <div class="about-stat-num">48h</div>
+            <div class="about-stat-label">Repos de la pâte</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">100km</div>
+            <div class="about-stat-label">Rayon d'approvisionnement</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">40</div>
+            <div class="about-stat-label">Couverts, aucun mauvais siège</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">120+</div>
+            <div class="about-stat-label">Références de vin nature</div>
+          </div>
+        </div>
+        <!-- Remplacer src par une vraie photo de cuisine pour votre client -->
+        <figure class="about-image reveal" style="transition-delay: 0.45s">
+          <img src="https://picsum.photos/seed/fold-kitchen/1240/480" alt="Cuisine ouverte chez Fold" loading="lazy">
+          <figcaption>— Cuisine ouverte au 147 rue du Marché</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARTE -->
+  <div class="menu-wrap" id="menu">
+    <div class="section">
+      <p class="section-label reveal">02 — Notre Carte</p>
+
+      <div class="menu-tabs reveal" style="transition-delay: 0.1s">
+        <div class="menu-tab active" data-tab="pizza">Pizzas</div>
+        <div class="menu-tab" data-tab="starters">Entrées &amp; Accompagnements</div>
+        <div class="menu-tab" data-tab="wine">Vin Nature</div>
+        <div class="menu-tab" data-tab="dessert">Desserts</div>
+      </div>
+
+      <!-- PIZZAS -->
+      <div class="menu-panel active" id="tab-pizza">
+        <div class="menu-category reveal">
+          <div class="menu-category-name">Tomate</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Margherita</div>
+                <div class="menu-item-desc">Tomate, fior di latte, basilic, huile d'olive</div>
+              </div>
+              <div class="menu-item-price">18€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Nduja &amp; Miel</div>
+                <div class="menu-item-desc">Nduja piquante, stracciatella, miel de fleurs, piment</div>
+              </div>
+              <div class="menu-item-price">24€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Salsiccia</div>
+                <div class="menu-item-desc">Saucisse au fenouil, oignon rouge, mozzarella fumée, origan</div>
+              </div>
+              <div class="menu-item-price">22€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Diavola</div>
+                <div class="menu-item-desc">Salami piccante, poivrons rôtis, câpres, fior di latte</div>
+              </div>
+              <div class="menu-item-price">23€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Marinara</div>
+                <div class="menu-item-desc">Tomate, ail, origan sauvage, sans fromage</div>
+              </div>
+              <div class="menu-item-price">15€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">La Spéciale du Moment</div>
+                <div class="menu-item-desc">Création saisonnière — demandez à votre serveur</div>
+              </div>
+              <div class="menu-item-price">Ardoise</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-category reveal" style="transition-delay: 0.15s">
+          <div class="menu-category-name">Blanche</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Bianca</div>
+                <div class="menu-item-desc">Fior di latte, crème à l'ail, zeste de citron, herbes fraîches</div>
+              </div>
+              <div class="menu-item-price">19€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Funghi</div>
+                <div class="menu-item-desc">Champignons sauvages, huile de truffe, taleggio, thym</div>
+              </div>
+              <div class="menu-item-price">26€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Patate</div>
+                <div class="menu-item-desc">Pommes de terre fines, romarin, pancetta, crème fraîche</div>
+              </div>
+              <div class="menu-item-price">21€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Quattro Formaggi</div>
+                <div class="menu-item-desc">Mozzarella, gorgonzola, pecorino, gruyère, filet de miel</div>
+              </div>
+              <div class="menu-item-price">25€</div>
+            </div>
+          </div>
+        </div>
+        <p class="menu-note reveal">Toutes nos pizzas sont cuites au four à bois · Base sans gluten disponible +3€ · Fromage végétalien sur demande</p>
+      </div>
+
+      <!-- ENTRÉES -->
+      <div class="menu-panel" id="tab-starters">
+        <div class="menu-category reveal">
+          <div class="menu-category-name">Pour Commencer</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Burrata</div>
+                <div class="menu-item-desc">Tomates anciennes, huile de basilic, fleur de sel</div>
+              </div>
+              <div class="menu-item-price">16€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Arancini (3 pcs)</div>
+                <div class="menu-item-desc">Risotto au safran, fontina, sauce tomate rôtie</div>
+              </div>
+              <div class="menu-item-price">14€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Focaccia Maison</div>
+                <div class="menu-item-desc">Romarin, fleur de sel, ricotta fouettée</div>
+              </div>
+              <div class="menu-item-price">9€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Planche de Charcuterie</div>
+                <div class="menu-item-desc">Sélection du chef, cornichons, mostarda, pain grillé</div>
+              </div>
+              <div class="menu-item-price">22€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Olives Frites</div>
+                <div class="menu-item-desc">Castelvetrano, chapelure dorée, aïoli au citron</div>
+              </div>
+              <div class="menu-item-price">10€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Salade du Marché</div>
+                <div class="menu-item-desc">Selon l'arrivage — demandez à votre serveur</div>
+              </div>
+              <div class="menu-item-price">14€</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-category reveal" style="transition-delay: 0.1s">
+          <div class="menu-category-name">Accompagnements</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Salade Amère</div>
+                <div class="menu-item-desc">Feuilles de saison, vinaigrette au xérès</div>
+              </div>
+              <div class="menu-item-price">8€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Pommes de Terre Croustillantes</div>
+                <div class="menu-item-desc">Sel au romarin, aïoli à l'ail</div>
+              </div>
+              <div class="menu-item-price">9€</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIN NATURE -->
+      <div class="menu-panel" id="tab-wine">
+        <div class="menu-category reveal">
+          <div class="menu-category-name">Pétillant &amp; Orange</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Pét-Nat Rosé</div>
+                <div class="menu-item-desc">Domaine Mosse, Val de Loire — vif, fraise, sec</div>
+              </div>
+              <div class="menu-item-price">14€ / 56€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ramato</div>
+                <div class="menu-item-desc">Radikon, Frioul — pinot gris macéré, ambré, texturé</div>
+              </div>
+              <div class="menu-item-price">18€ / 72€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ancestrale Brut</div>
+                <div class="menu-item-desc">Clos du Tue-Bœuf — très sec, autolytique, persistant</div>
+              </div>
+              <div class="menu-item-price">16€ / 64€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Soave Superiore</div>
+                <div class="menu-item-desc">Gini, Vénétie — garganega biodynamique, minéral, salin</div>
+              </div>
+              <div class="menu-item-price">15€ / 60€</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-category reveal" style="transition-delay: 0.1s">
+          <div class="menu-category-name">Rouge</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Cru Beaujolais</div>
+                <div class="menu-item-desc">Lapierre Morgon — gamay en grappe entière, juteux, terreux</div>
+              </div>
+              <div class="menu-item-price">15€ / 60€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Nerello Mascalese</div>
+                <div class="menu-item-desc">Cornelissen, Etna — volcanique, fraise des bois, longue finale</div>
+              </div>
+              <div class="menu-item-price">22€ / 88€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Valpolicella</div>
+                <div class="menu-item-desc">Quintarelli, Vénétie — classique, cerise séchée, épicé</div>
+              </div>
+              <div class="menu-item-price">20€ / 80€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Coup de Cœur du Sommelier</div>
+                <div class="menu-item-desc">Sélection tournante — demandez la bouteille de la semaine</div>
+              </div>
+              <div class="menu-item-price">Nous consulter</div>
+            </div>
+          </div>
+        </div>
+        <p class="menu-note reveal">Verre / Bouteille · Carte des vins complète disponible sur demande · 120+ références en cave</p>
+      </div>
+
+      <!-- DESSERTS -->
+      <div class="menu-panel" id="tab-dessert">
+        <div class="menu-category reveal">
+          <div class="menu-category-name">Sucré</div>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Tiramisu</div>
+                <div class="menu-item-desc">Classique, préparé à la commande, pour deux personnes</div>
+              </div>
+              <div class="menu-item-price">16€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Panna Cotta</div>
+                <div class="menu-item-desc">Vanille, compotée de fruits de saison</div>
+              </div>
+              <div class="menu-item-price">11€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Affogato</div>
+                <div class="menu-item-desc">Espresso sur gelato vanille maison</div>
+              </div>
+              <div class="menu-item-price">9€</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Sélection de Fromages</div>
+                <div class="menu-item-desc">Trois fromages italiens, rayon de miel, noix</div>
+              </div>
+              <div class="menu-item-price">18€</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GALERIE -->
+  <div class="gallery-wrap" id="gallery">
+    <div class="section">
+      <p class="section-label reveal">03 — La Table</p>
+      <!-- Remplacer chaque src par de vraies photos pour votre client -->
+      <div class="gallery-grid">
+        <div class="gallery-item reveal">
+          <img class="gallery-inner" src="https://picsum.photos/seed/fold-pizza-main/1200/760" alt="Margherita au four à bois" loading="lazy">
+          <span class="gallery-caption">Margherita au four à bois</span>
+        </div>
+        <div class="gallery-item reveal" style="transition-delay: 0.1s">
+          <img class="gallery-inner" src="https://picsum.photos/seed/fold-nduja/600/760" alt="Nduja et miel" loading="lazy">
+          <span class="gallery-caption">Nduja &amp; miel</span>
+        </div>
+        <div class="gallery-item reveal" style="transition-delay: 0.2s">
+          <img class="gallery-inner" src="https://picsum.photos/seed/fold-cellar/600/760" alt="La cave" loading="lazy">
+          <span class="gallery-caption">La cave</span>
+        </div>
+        <div class="gallery-item reveal" style="transition-delay: 0.15s">
+          <img class="gallery-inner" src="https://picsum.photos/seed/fold-salad/800/600" alt="Salade du marché" loading="lazy">
+          <span class="gallery-caption">Salade du marché</span>
+        </div>
+        <div class="gallery-item reveal" style="transition-delay: 0.3s">
+          <img class="gallery-inner" src="https://picsum.photos/seed/fold-dining/1600/600" alt="La salle au crépuscule" loading="lazy">
+          <span class="gallery-caption">La salle au crépuscule</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="events-wrap" id="events">
+    <div class="section">
+      <p class="section-label reveal">04 — Agenda</p>
+      <div class="events-list">
+        <div class="event-item reveal">
+          <div>
+            <div class="event-date">14</div>
+            <div class="event-date-sub">Juin 2025</div>
+          </div>
+          <div>
+            <div class="event-name">Dîner Vins Nature avec Radikon</div>
+            <div class="event-desc">Un menu dégustation en quatre actes accordé aux vins du domaine légendaire Radikon en Frioul. Le fils du vigneron nous rejoint pour la soirée.</div>
+          </div>
+          <div class="event-tag">Sur réservation</div>
+        </div>
+        <div class="event-item reveal" style="transition-delay: 0.1s">
+          <div>
+            <div class="event-date">21</div>
+            <div class="event-date-sub">Juin 2025</div>
+          </div>
+          <div>
+            <div class="event-name">Lancement du Brunch du Samedi</div>
+            <div class="event-desc">Nous ouvrons le samedi matin. Focaccia fraîche, plats à l'œuf et un programme de Bloody Mary qui deviendra votre rituel de week-end.</div>
+          </div>
+          <div class="event-tag">Entrée libre</div>
+        </div>
+        <div class="event-item reveal" style="transition-delay: 0.2s">
+          <div>
+            <div class="event-date">05</div>
+            <div class="event-date-sub">Juil. 2025</div>
+          </div>
+          <div>
+            <div class="event-name">Atelier Pâte à Pizza</div>
+            <div class="event-desc">Passez un dimanche matin à apprendre notre processus de fermentation de 48 heures avec notre chef boulanger Luca. Repartez avec des pâtons et une technique pour la vie.</div>
+          </div>
+          <div class="event-tag">Sur réservation</div>
+        </div>
+        <div class="event-item reveal" style="transition-delay: 0.3s">
+          <div>
+            <div class="event-date">Tous</div>
+            <div class="event-date-sub">les mardis</div>
+          </div>
+          <div>
+            <div class="event-name">Dégustation de Vins Nature</div>
+            <div class="event-desc">Six verres, sans prise de notes, sans chichis. Juste du bon vin et de la bonne compagnie, de 18h à 20h chaque mardi.</div>
+          </div>
+          <div class="event-tag">Entrée libre</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RÉSERVATIONS -->
+  <section class="res-wrap" id="reservations">
+    <div class="res-inner">
+      <div class="res-left">
+        <p class="res-label reveal">05 — Venez Nous Voir</p>
+        <h2 class="res-headline reveal" style="transition-delay: 0.1s">Réservez<br>votre table.</h2>
+        <p class="res-body reveal" style="transition-delay: 0.2s">
+          Réservations à partir de deux personnes. Les passants sont toujours bienvenus au bar. Nous réservons quelques tables pour les sans-réservation chaque soir.
+        </p>
+        <div class="res-details reveal" style="transition-delay: 0.3s">
+          <div class="res-detail-row">
+            <dl class="res-detail">
+              <dt>Adresse</dt>
+              <dd>147 rue du Marché<br>Le Quartier, Ville</dd>
+            </dl>
+            <dl class="res-detail">
+              <dt>Horaires</dt>
+              <dd>Mar – Ven 12h00 – 23h00<br>Sam – Dim 11h00 – 23h00</dd>
+            </dl>
+          </div>
+          <div class="res-detail-row">
+            <dl class="res-detail">
+              <dt>Téléphone</dt>
+              <dd>(555) 019-2847</dd>
+            </dl>
+            <dl class="res-detail">
+              <dt>E-mail</dt>
+              <dd>bonjour@foldpizza.fr</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="res-form reveal" style="transition-delay: 0.15s">
+        <div class="res-form-title">Faire une réservation</div>
+        <div class="res-form-sub">Confirmation sous 2 heures</div>
+        <form onsubmit="handleReservation(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="res-name">Nom</label>
+              <input class="form-input" id="res-name" type="text" placeholder="Votre nom" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="res-email">E-mail</label>
+              <input class="form-input" id="res-email" type="email" placeholder="votre@email.fr" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="res-date">Date</label>
+              <input class="form-input" id="res-date" type="date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="res-time">Heure</label>
+              <select class="form-select form-input" id="res-time">
+                <option>12:00</option><option>12:30</option>
+                <option>13:00</option><option>13:30</option>
+                <option>18:00</option><option>18:30</option>
+                <option>19:00</option><option>19:30</option>
+                <option selected>20:00</option><option>20:30</option>
+                <option>21:00</option><option>21:30</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="res-guests">Couverts</label>
+              <select class="form-select form-input" id="res-guests">
+                <option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option>
+                <option>8+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="res-phone">Téléphone</label>
+              <input class="form-input" id="res-phone" type="tel" placeholder="06 00 00 00 00">
+            </div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label" for="res-notes">Commentaires</label>
+            <textarea class="form-input form-textarea" id="res-notes" placeholder="Allergies, occasions spéciales, préférences de placement…"></textarea>
+          </div>
+          <button type="submit" class="form-submit">Demander une réservation</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <div class="nl-wrap">
+    <div class="nl-left reveal">
+      <div class="nl-headline">Restez dans la boucle.</div>
+      <div class="nl-sub">Nouvelles cartes, événements et quelques conseils vins. Jamais de spam.</div>
+    </div>
+    <form class="nl-form reveal" style="transition-delay: 0.15s" onsubmit="handleNewsletter(event)">
+      <input class="nl-input" type="email" placeholder="votre@email.fr" required>
+      <button type="submit" class="nl-btn">S'abonner</button>
+    </form>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-logo">Fold</span>
+    <div class="footer-links">
+      <a href="#about">Histoire</a>
+      <a href="#menu">Carte</a>
+      <a href="#gallery">Galerie</a>
+      <a href="#events">Agenda</a>
+      <a href="#reservations">Réserver</a>
+    </div>
+    <span class="footer-copy">© 2024 Restaurant Fold · 147 rue du Marché</span>
+  </footer>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    navToggle.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      navToggle.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('open');
+      navToggle.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Scroll-triggered reveals
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Menu tabs
+    document.querySelectorAll('.menu-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Set minimum reservation date to today
+    const dateInput = document.getElementById('res-date');
+    if (dateInput) {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.min = today;
+      dateInput.value = today;
+    }
+
+    // ─── FORMSPREE SETUP ─────────────────────────────────────
+    // 1. Go to https://formspree.io and create a free account
+    // 2. Create two forms and paste your form IDs below
+    const RESERVATION_FORM_ID = 'YOUR_RESERVATION_FORM_ID';
+    const NEWSLETTER_FORM_ID  = 'YOUR_NEWSLETTER_FORM_ID';
+
+    async function postToFormspree(formId, data) {
+      const res = await fetch(`https://formspree.io/f/${formId}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return res.ok;
+    }
+
+    async function handleReservation(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn  = form.querySelector('.form-submit');
+      btn.textContent = 'Envoi en cours…';
+      btn.disabled = true;
+
+      const data = {
+        nom:          form.querySelector('#res-name').value,
+        email:        form.querySelector('#res-email').value,
+        date:         form.querySelector('#res-date').value,
+        heure:        form.querySelector('#res-time').value,
+        couverts:     form.querySelector('#res-guests').value,
+        telephone:    form.querySelector('#res-phone').value,
+        commentaires: form.querySelector('#res-notes').value,
+      };
+
+      const ok = await postToFormspree(RESERVATION_FORM_ID, data);
+      if (ok) {
+        btn.textContent = 'Demande envoyée — nous vous recontacterons !';
+        btn.style.background = 'oklch(52% 0.14 145)';
+      } else {
+        btn.textContent = 'Une erreur est survenue — appelez-nous';
+        btn.style.background = 'oklch(50% 0.18 25)';
+        btn.disabled = false;
+      }
+    }
+
+    async function handleNewsletter(e) {
+      e.preventDefault();
+      const form  = e.target;
+      const btn   = form.querySelector('.nl-btn');
+      const email = form.querySelector('.nl-input').value;
+      btn.textContent = 'Inscription…';
+      btn.disabled = true;
+
+      const ok = await postToFormspree(NEWSLETTER_FORM_ID, { email });
+      if (ok) {
+        btn.textContent = 'Inscrit(e) !';
+        btn.style.background = 'oklch(52% 0.14 145)';
+      } else {
+        btn.textContent = 'Erreur — réessayez';
+        btn.style.background = 'oklch(50% 0.18 25)';
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>
